@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A12345678901234567890123 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12345678901234567890124 /* AppDelegate.swift */; };
+		A12345678901234567890140 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12345678901234567890124 /* AppDelegate.swift */; };
 		A12345678901234567890125 /* WindowSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12345678901234567890126 /* WindowSwitcher.swift */; };
 		A12345678901234567890127 /* SwitcherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12345678901234567890128 /* SwitcherView.swift */; };
 		A12345678901234567890129 /* AccessibilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12345678901234567890130 /* AccessibilityManager.swift */; };
@@ -22,6 +22,7 @@
 		A12345678901234567890130 /* AccessibilityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityManager.swift; sourceTree = "<group>"; };
 		A12345678901234567890132 /* HotKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyManager.swift; sourceTree = "<group>"; };
 		A12345678901234567890133 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A12345678901234567890141 /* AltTab.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AltTab.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +61,7 @@
 				A12345678901234567890130 /* AccessibilityManager.swift */,
 				A12345678901234567890132 /* HotKeyManager.swift */,
 				A12345678901234567890133 /* Info.plist */,
+				A12345678901234567890141 /* AltTab.entitlements */,
 			);
 			path = AltTab;
 			sourceTree = "<group>";
@@ -136,7 +138,7 @@
 				A12345678901234567890127 /* SwitcherView.swift in Sources */,
 				A12345678901234567890129 /* AccessibilityManager.swift in Sources */,
 				A12345678901234567890131 /* HotKeyManager.swift in Sources */,
-				A12345678901234567890123 /* AppDelegate.swift in Sources */,
+				A12345678901234567890140 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

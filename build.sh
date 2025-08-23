@@ -34,6 +34,15 @@ EXPORT_PATH="$BUILD_DIR/Export"
 echo "📁 Diretório do projeto: $PROJECT_DIR"
 echo "🔧 Configuração: $CONFIGURATION"
 
+# Verificar se o projeto pode ser lido
+echo "🔍 Verificando integridade do projeto..."
+if ! xcodebuild -project "$PROJECT_NAME.xcodeproj" -list &> /dev/null; then
+    echo "❌ Erro: O projeto Xcode está corrompido ou inválido"
+    echo "💡 Verifique o arquivo $PROJECT_NAME.xcodeproj/project.pbxproj"
+    exit 1
+fi
+echo "✅ Projeto válido"
+
 # Limpar builds anteriores
 echo "🧹 Limpando builds anteriores..."
 rm -rf "$BUILD_DIR"
