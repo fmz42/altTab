@@ -1,0 +1,61 @@
+# Ignore build products
+build/
+DerivedData/
+*.xcarchive
+
+# Ignore Xcode user-specific files
+*.xcuserstate
+*.xcuserdatad/
+UserInterfaceState.xcuserstate
+project.xcworkspace/xcuserdata/
+
+# Ignore MacOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Ignore thumbnails created by Windows
+Thumbs.db
+ehthumbs.db
+
+# Ignore Vim swap files
+*.swp
+*.swo
+
+# Ignore temporary files
+*~
+*.tmp
+
+# Ignore log files
+*.log
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore package manager files
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+
+# Ignore CocoaPods
+Pods/
+*.xcworkspace
+
+# Ignore Carthage
+Carthage/Build/
+
+# Ignore Swift Package Manager
+.build/
+Package.resolved
+
+# Ignore Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Ignore app-specific files
+*.app
+*.ipa
+*.dSYM.zip
+*.dSYM
