@@ -38,18 +38,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func setupHotKeys() {
-        // Registrar Command+Tab (ou Alt+Tab)
+        // Registrar Option+Tab
         hotKeyManager.registerHotKey(
             keyCode: 48, // Tab key
-            modifierFlags: .command
+            modifierFlags: .option
         ) { [weak self] in
             self?.windowSwitcher.showSwitcher()
         }
         
-        // Registrar Command+Shift+Tab para navegação reversa
+        // Registrar Option+Shift+Tab para navegação reversa
         hotKeyManager.registerHotKey(
             keyCode: 48, // Tab key
-            modifierFlags: [.command, .shift]
+            modifierFlags: [.option, .shift]
         ) { [weak self] in
             self?.windowSwitcher.showSwitcher(reverse: true)
         }
@@ -65,7 +65,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {
-            NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+            if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
+                NSWorkspace.shared.open(url)
+            }
         }
         
         NSApp.terminate(nil)

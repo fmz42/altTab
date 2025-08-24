@@ -196,14 +196,14 @@ class WindowSwitcher {
             }
             
         case .keyUp:
-            // Verificar se Command foi solto
-            if event.keyCode == 55 { // Command key
+            // Verificar se Option foi solto
+            if event.keyCode == 58 { // Option key
                 hideSwitcher()
             }
             
         case .flagsChanged:
-            // Se Command foi solto, finalizar switching
-            if !event.modifierFlags.contains(.command) {
+            // Se Option foi solto, finalizar switching
+            if !event.modifierFlags.contains(.option) {
                 hideSwitcher()
             }
             
