@@ -34,7 +34,7 @@ class HotKeyManager {
         var hotKeyRef: EventHotKeyRef?
         let status = RegisterEventHotKey(keyCode,
                                        carbonModifiers,
-                                       EventHotKeyID(signature: OSType(fourCharCode: "ALTB"), id: hotKeyID),
+                                       EventHotKeyID(signature: fourCharCode(from: "ALTB"), id: hotKeyID),
                                        GetApplicationEventTarget(),
                                        0,
                                        &hotKeyRef)
@@ -84,6 +84,10 @@ class HotKeyManager {
             handler()
         }
     }
+    
+    private func fourCharCode(from string: String) -> FourCharCode {
+        return string.utf16.reduce(0, {$0 << 8 + FourCharCode($1)})
+    }
 }
 
 // Event handler global para hot keys
@@ -112,14 +116,4 @@ private func hotKeyEventHandler(nextHandler: EventHandlerCallRef?,
     }
     
     return OSStatus(eventNotHandledErr)
-}
-
-private func fourCharCode(_ string: String) -> FourCharCode {
-    let utf8 = string.utf8
-    var result: FourCharCode = 0
-    for (i, byte) in utf8.enumerated() {
-        if i >= 4 { break }
-        result = result << 8 + FourCharCode(byte)
-    }
-    return result
 }

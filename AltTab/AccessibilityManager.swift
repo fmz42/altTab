@@ -4,8 +4,7 @@ import ApplicationServices
 class AccessibilityManager {
     
     func checkAccessibilityPermissions() -> Bool {
-        let trusted = AXIsProcessTrusted()
-        return trusted
+        return AXIsProcessTrusted()
     }
     
     func requestAccessibilityPermissions() {
@@ -15,43 +14,28 @@ class AccessibilityManager {
     
     func getRunningApplications() -> [NSRunningApplication] {
         return NSWorkspace.shared.runningApplications.filter { app in
-            app.activationPolicy == .regular && 
+            app.activationPolicy == .regular &&
             !app.isTerminated &&
             app.localizedName != nil
         }
     }
     
     func getWindowsForApplication(_ app: NSRunningApplication) -> [AXUIElement] {
-        guard let appElement = AXUIElementCreateApplication(app.processIdentifier) else {
-            return []
-        }
+        let appElement = AXUIElementCreateApplication(app.processIdentifier)
         
         var windowsRef: CFTypeRef?
-        let result = AXUIElementCopyAttributeValue(appElement, kAXWindowsAttribute, &windowsRef)
+        let result = AXUIElementCopyAttributeValue(appElement, kAXWindowsAttribute as CFString, &windowsRef)
         
         guard result == .success,
               let windows = windowsRef as? [AXUIElement] else {
             return []
         }
         
-        return windows.filter { window in
-            // Filtrar apenas janelas visíveis e minimizáveis
-            var isMinimized: CFTypeRef?
-            AXUIElementCopyAttributeValue(window, kAXMinimizedAttribute, &isMinimized)
-            
-            if let minimized = isMinimized as? Bool, minimized {
-                return true // Incluir janelas minimizadas
-            }
-            
-            var position: CFTypeRef?
-            AXUIElementCopyAttributeValue(window, kAXPositionAttribute, &position)
-            
-            return position != nil
-        }
+        return windows
     }
     
     func activateApplication(_ app: NSRunningApplication) {
-        app.activate(options: [.activateIgnoringOtherApps])
+        app.activate(options: [])
     }
     
     func getApplicationIcon(_ app: NSRunningApplication) -> NSImage? {
@@ -61,26 +45,31 @@ class AccessibilityManager {
     func getApplicationName(_ app: NSRunningApplication) -> String {
         return app.localizedName ?? "Unknown"
     }
-    
-    func getWindowTitle(_ window: AXUIElement) -> String? {
-        var titleRef: CFTypeRef?
-        let result = AXUIElementCopyAttributeValue(window, kAXTitleAttribute, &titleRef)
-        
-        guard result == .success else { return nil }
-        return titleRef as? String
-    }
-    
-    func focusWindow(_ window: AXUIElement) {
-        // Primeiro, tentar trazer a janela para frente
-        AXUIElementSetAttributeValue(window, kAXMainAttribute, kCFBooleanTrue)
-        AXUIElementSetAttributeValue(window, kAXFocusedAttribute, kCFBooleanTrue)
-        
-        // Se a janela estiver minimizada, restaurá-la
-        var isMinimized: CFTypeRef?
-        let result = AXUIElementCopyAttributeValue(window, kAXMinimizedAttribute, &isMinimized)
-        
-        if result == .success, let minimized = isMinimized as? Bool, minimized {
-            AXUIElementSetAttributeValue(window, kAXMinimizedAttribute, kCFBooleanFalse)
+
+    func getWindowTitle(window: AXUIElement) -> String {
+        var titleRef: AnyObject?
+        let result = AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleRef)
+
+        if result == .success, let title = titleRef as? String {
+            return title
         }
+        return ""
+    }
+
+    func focusWindow(_ window: AXUIElement) {
+        AXUIElementSetAttributeValue(window, kAXMainAttribute as CFString, kCFBooleanTrue)
+        AXUIElementSetAttributeValue(window, kAXFocusedAttribute as CFString, kCFBooleanTrue)
+    }
+
+    func unminimizeWindow(_ window: AXUIElement) {
+        if isWindowMinimized(window: window) {
+            AXUIElementSetAttributeValue(window, kAXMinimizedAttribute as CFString, kCFBooleanFalse)
+        }
+    }
+
+    func isWindowMinimized(window: AXUIElement) -> Bool {
+        var isMinimized: AnyObject?
+        AXUIElementCopyAttributeValue(window, kAXMinimizedAttribute as CFString, &isMinimized)
+        return (isMinimized as? NSNumber)?.boolValue ?? false
     }
 }

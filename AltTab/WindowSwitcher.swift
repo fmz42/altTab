@@ -12,7 +12,7 @@ struct ApplicationWindow {
         
         if let window = window {
             let accessibilityManager = AccessibilityManager()
-            self.title = accessibilityManager.getWindowTitle(window) ?? application.localizedName ?? "Unknown"
+            self.title = accessibilityManager.getWindowTitle(window: window) 
         } else {
             self.title = application.localizedName ?? "Unknown"
         }
