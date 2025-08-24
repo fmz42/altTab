@@ -3,7 +3,7 @@ import AppKit
 struct ApplicationWindow: Identifiable {
     let id = UUID()
     let app: NSRunningApplication
-    let window: AXUIElement
+    let window: AXUIElement? // Tornar a janela opcional
     
     var appName: String {
         return app.localizedName ?? "Unknown"
@@ -13,10 +13,20 @@ struct ApplicationWindow: Identifiable {
         return app.icon
     }
     
-    var windowTitle: String? {
-        var titleRef: CFTypeRef?
-        let result = AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleRef)
-        guard result == .success else { return nil }
-        return titleRef as? String
+    var title: String {
+        if let window = window {
+            var titleRef: CFTypeRef?
+            let result = AXUIElementCopyAttributeValue(window, kAXTitleAttribute as CFString, &titleRef)
+            if result == .success, let title = titleRef as? String {
+                return title
+            }
+        }
+        return appName
+    }
+    
+    // Inicializador que aceita uma janela opcional
+    init(app: NSRunningApplication, window: AXUIElement? = nil) {
+        self.app = app
+        self.window = window
     }
 }

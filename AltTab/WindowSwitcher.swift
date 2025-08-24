@@ -1,28 +1,7 @@
 import Cocoa
 
-struct ApplicationWindow {
-    let application: NSRunningApplication
-    let window: AXUIElement?
-    let title: String
-    let icon: NSImage?
-    
-    init(application: NSRunningApplication, window: AXUIElement? = nil) {
-        self.application = application
-        self.window = window
-        
-        if let window = window {
-            let accessibilityManager = AccessibilityManager()
-            self.title = accessibilityManager.getWindowTitle(window: window) 
-        } else {
-            self.title = application.localizedName ?? "Unknown"
-        }
-        
-        self.icon = application.icon
-    }
-}
-
 class WindowSwitcher {
-    
+
     private var switcherView: SwitcherView?
     private var accessibilityManager: AccessibilityManager
     private var currentApplications: [ApplicationWindow] = []
@@ -76,13 +55,13 @@ class WindowSwitcher {
         
         // Ativar aplicação selecionada
         if selectedIndex >= 0 && selectedIndex < currentApplications.count {
-            let selectedApp = currentApplications[selectedIndex]
+            let selected = currentApplications[selectedIndex]
             
-            if let window = selectedApp.window {
+            if let window = selected.window {
                 accessibilityManager.focusWindow(window)
             }
             
-            accessibilityManager.activateApplication(selectedApp.application)
+            accessibilityManager.activateApplication(selected.app)
         }
         
         // Ocultar interface
@@ -104,24 +83,20 @@ class WindowSwitcher {
             
             if appWindows.isEmpty {
                 // Adicionar a aplicação mesmo sem janelas específicas
-                windows.append(ApplicationWindow(application: app))
+                windows.append(ApplicationWindow(app: app))
             } else {
                 // Adicionar cada janela da aplicação
                 for window in appWindows {
-                    windows.append(ApplicationWindow(application: app, window: window))
+                    windows.append(ApplicationWindow(app: app, window: window))
                 }
             }
         }
         
         // Ordenar por uso recente (aplicações ativas primeiro)
-        return windows.sorted { window1, window2 in
-            if window1.application.isActive && !window2.application.isActive {
-                return true
-            }
-            if !window1.application.isActive && window2.application.isActive {
-                return false
-            }
-            return window1.application.processIdentifier > window2.application.processIdentifier
+        return windows.sorted { w1, w2 in
+            if w1.app.isActive && !w2.app.isActive { return true }
+            if !w1.app.isActive && w2.app.isActive { return false }
+            return w1.app.processIdentifier > w2.app.processIdentifier
         }
     }
     
@@ -130,8 +105,8 @@ class WindowSwitcher {
             return 0
         }
         
-        for (index, window) in currentApplications.enumerated() {
-            if window.application.processIdentifier == currentApp.processIdentifier {
+        for (index, appWindow) in currentApplications.enumerated() {
+            if appWindow.app.processIdentifier == currentApp.processIdentifier {
                 return index
             }
         }
@@ -152,8 +127,6 @@ class WindowSwitcher {
     }
     
     private func showInterface() {
-        guard !currentApplications.isEmpty else { return }
-        
         switcherView = SwitcherView(applications: currentApplications, selectedIndex: selectedIndex)
         switcherView?.show()
     }
@@ -168,7 +141,7 @@ class WindowSwitcher {
     }
     
     private func setupEventMonitoring() {
-        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.keyDown, .keyUp, .flagsChanged]) { [weak self] event in
+        eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyUp) { [weak self] event in
             self?.handleKeyEvent(event)
         }
     }
@@ -181,34 +154,9 @@ class WindowSwitcher {
     }
     
     private func handleKeyEvent(_ event: NSEvent) {
-        switch event.type {
-        case .keyDown:
-            if event.keyCode == 48 { // Tab key
-                if event.modifierFlags.contains(.shift) {
-                    selectPrevious()
-                } else {
-                    selectNext()
-                }
-            } else if event.keyCode == 53 { // Escape key
-                isVisible = false
-                hideInterface()
-                removeEventMonitoring()
-            }
-            
-        case .keyUp:
-            // Verificar se Option foi solto
-            if event.keyCode == 58 { // Option key
-                hideSwitcher()
-            }
-            
-        case .flagsChanged:
-            // Se Option foi solto, finalizar switching
-            if !event.modifierFlags.contains(.option) {
-                hideSwitcher()
-            }
-            
-        default:
-            break
+        // Verifica se a tecla Option (Alt) foi solta
+        if event.keyCode == 58 && !event.modifierFlags.contains(.option) {
+            hideSwitcher()
         }
     }
 }
